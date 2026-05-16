@@ -107,10 +107,12 @@ const [selectedEntry, setSelectedEntry] = useState(null);
 
   const moduleOptions = useMemo(
     () =>
-      items
-        .filter((item) => item.type === "Module")
-        .map((item) => item.name)
-        .filter(Boolean)
+      [...new Set(
+        items
+          .filter((item) => item.type === "Module")
+          .map((item) => item.name?.trim())
+          .filter(Boolean)
+      )]
         .sort((firstName, secondName) => firstName.localeCompare(secondName)),
     [items]
   );
@@ -436,23 +438,28 @@ function handleResetLibrary() {
             {formData.type !== "Module" && (
               <label>
                 Module
-                <select
-                  name="module"
-                  value={formData.module}
-                  onChange={handleFormChange}
-                >
-                  <option value="">
-                    {moduleOptions.length
-                      ? "Choose a saved module"
-                      : "Create a Module card first"}
-                  </option>
+                {moduleOptions.length ? (
+                  <select
+                    name="module"
+                    value={formData.module}
+                    onChange={handleFormChange}
+                  >
+                    <option value="">Choose a saved module</option>
 
-                  {availableModuleOptions.map((moduleName) => (
-                    <option key={moduleName} value={moduleName}>
-                      {moduleName}
-                    </option>
-                  ))}
-                </select>
+                    {availableModuleOptions.map((moduleName) => (
+                      <option key={moduleName} value={moduleName}>
+                        {moduleName}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name="module"
+                    value={formData.module}
+                    onChange={handleFormChange}
+                    placeholder="Example: Sample Bestiary"
+                  />
+                )}
               </label>
             )}
 
